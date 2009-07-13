@@ -7,7 +7,7 @@ setup(
     author_email="jannis@leidel.info",
     url="http://bitbucket.org/jezdez/sphinx-pypi-upload/",
     download_url="http://bitbucket.org/jezdez/sphinx-pypi-upload/downloads/",
-    description="setuptools commands to help uploading of Sphinx documentation to PyPI",
+    description="setuptools command for uploading Sphinx documentation to PyPI",
     license="BSD",
     classifiers=[
         "Topic :: Documentation",
