@@ -22,41 +22,34 @@ import tempfile
 import cStringIO as StringIO
 
 from distutils import log
-from distutils.core import PyPIRCCommand
+from distutils.command.upload import upload
 from distutils.errors import DistutilsOptionError
 
-class UploadDoc(PyPIRCCommand):
+class UploadDoc(upload):
     """Distutils command to upload Sphinx documentation."""
 
     description = 'Upload Sphinx documentation to PyPI'
-    user_options = PyPIRCCommand.user_options + [
+    user_options = [
+        ('repository=', 'r',
+         "url of repository [default: %s]" % upload.DEFAULT_REPOSITORY),
+        ('show-response', None,
+         'display full response text from server'),
         ('upload-dir=', None, 'directory to upload'),
         ]
-    boolean_options = PyPIRCCommand.boolean_options + ['sign']
+    boolean_options = upload.boolean_options
 
     def initialize_options(self):
-        PyPIRCCommand.initialize_options(self)
+        upload.initialize_options(self)
         self.upload_dir = None
-        self.username = ''
-        self.password = ''
-        self.show_response = 0
-        self.sign = False
-        self.identity = None
 
     def finalize_options(self):
-        PyPIRCCommand.finalize_options(self)
+        upload.finalize_options(self)
         if self.upload_dir is None:
             build = self.get_finalized_command('build')
             self.upload_dir = os.path.join(build.build_base, 'sphinx')
             self.mkpath(self.upload_dir)
         self.ensure_dirname('upload_dir')
         self.announce('Using upload directory %s' % self.upload_dir)
-        config = self._read_pypirc()
-        if config != {}:
-            self.username = config['username']
-            self.password = config['password']
-            self.repository = config['repository']
-            self.realm = config['realm']
 
     def create_zipfile(self):
         name = self.distribution.metadata.get_name()
