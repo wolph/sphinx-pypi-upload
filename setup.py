@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="Sphinx-PyPI-upload",
-    version='0.1',
+    version='0.1.1',
     author="Jannis Leidel",
     author_email="jannis@leidel.info",
     url="http://bitbucket.org/jezdez/sphinx-pypi-upload/",
