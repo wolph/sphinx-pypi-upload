@@ -3,7 +3,7 @@
     sphinx_pypi_upload
     ~~~~~~~~~~~~~~~~~~
 
-    setuptools commands to help uploading of Sphinx documentation to PyPI
+    setuptools command for uploading Sphinx documentation to PyPI
 
     :author: Jannis Leidel
     :contact: jannis@leidel.info
