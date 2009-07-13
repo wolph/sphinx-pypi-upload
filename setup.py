@@ -24,7 +24,7 @@ setup(
     py_modules=["sphinx_pypi_upload"],
     entry_points = {
         "distutils.commands": [
-            "upload_sphinx = sphinx_pypi_upload:upload",
+            "upload_sphinx = sphinx_pypi_upload:UploadDoc",
         ]
     }
 )
