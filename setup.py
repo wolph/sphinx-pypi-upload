@@ -1,13 +1,17 @@
 from setuptools import setup
 
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
 setup(
     name="Sphinx-PyPI-upload",
-    version='0.2',
+    version='0.2.1',
     author="Jannis Leidel",
     author_email="jannis@leidel.info",
     url="http://bitbucket.org/jezdez/sphinx-pypi-upload/",
     download_url="http://bitbucket.org/jezdez/sphinx-pypi-upload/downloads/",
     description="setuptools command for uploading Sphinx documentation to PyPI",
+    long_description=read('README'),
     license="BSD",
     classifiers=[
         "Topic :: Documentation",
