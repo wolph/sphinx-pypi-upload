@@ -15,11 +15,17 @@ import sys
 import os
 import socket
 import zipfile
-import httplib
 import base64
-import urlparse
 import tempfile
-import cStringIO as StringIO
+import io as StringIO
+
+try:
+    from httplib import HTTPConnection, HTTPSConnection
+    from urlparse import urlparse
+except ImportError:
+    # Python 3
+    from http.client import HTTPConnection, HTTPSConnection
+    from urllib.parse import urlparse
 
 from distutils import log
 from distutils.command.upload import upload
@@ -58,8 +64,9 @@ class UploadDoc(upload):
         zip_file = zipfile.ZipFile(tmp_file, "w")
         for root, dirs, files in os.walk(self.upload_dir):
             if not files:
-                raise DistutilsOptionError, \
-                      "no files found in upload directory '%s'" % self.upload_dir
+                raise DistutilsOptionError(
+                    "no files found in upload directory '%s'"
+                    % self.upload_dir)
             for name in files:
                 full = os.path.join(root, name)
                 relative = root[len(self.upload_dir):].lstrip(os.path.sep)
@@ -72,38 +79,39 @@ class UploadDoc(upload):
         content = open(filename,'rb').read()
         meta = self.distribution.metadata
         data = {
-            ':action': 'doc_upload',
-            'name': meta.get_name(),
+            ':action': b'doc_upload',
+            'name': meta.get_name().encode('ascii'),
             'content': (os.path.basename(filename),content),
         }
         # set up the authentication
-        auth = "Basic " + base64.encodestring(self.username + ":" + self.password).strip()
+        auth = (self.username + ":" + self.password).encode('ascii')
+        auth = b"Basic " + base64.encodestring(auth).strip()
 
         # Build up the MIME payload for the POST data
-        boundary = '--------------GHSKFJDLGDS7543FJKLFHRE75642756743254'
-        sep_boundary = '\n--' + boundary
-        end_boundary = sep_boundary + '--'
-        body = StringIO.StringIO()
+        boundary = b'--------------GHSKFJDLGDS7543FJKLFHRE75642756743254'
+        sep_boundary = b'\n--' + boundary
+        end_boundary = sep_boundary + b'--'
+        body = StringIO.BytesIO()
         for key, value in data.items():
             # handle multiple entries for the same name
             if type(value) != type([]):
                 value = [value]
             for value in value:
                 if type(value) is tuple:
-                    fn = ';filename="%s"' % value[0]
+                    fn = (';filename="%s"' % value[0]).encode('ascii')
                     value = value[1]
                 else:
-                    fn = ""
-                value = str(value)
+                    fn = b""
                 body.write(sep_boundary)
-                body.write('\nContent-Disposition: form-data; name="%s"'%key)
+                body.write(('\nContent-Disposition: form-data; name="%s"'
+                            % key).encode('ascii'))
                 body.write(fn)
-                body.write("\n\n")
+                body.write(b"\n\n")
                 body.write(value)
-                if value and value[-1] == '\r':
-                    body.write('\n')  # write an extra newline (lurve Macs)
+                if value and value[-1] == b'\r':
+                    body.write(b'\n')  # write an extra newline (lurve Macs)
         body.write(end_boundary)
-        body.write("\n")
+        body.write(b"\n")
         body = body.getvalue()
 
         self.announce("Submitting documentation to %s" % (self.repository), log.INFO)
@@ -112,14 +120,14 @@ class UploadDoc(upload):
         # We can't use urllib2 since we need to send the Basic
         # auth right with the first request
         schema, netloc, url, params, query, fragments = \
-            urlparse.urlparse(self.repository)
+            urlparse(self.repository)
         assert not params and not query and not fragments
         if schema == 'http':
-            http = httplib.HTTPConnection(netloc)
+            http = HTTPConnection(netloc)
         elif schema == 'https':
-            http = httplib.HTTPSConnection(netloc)
+            http = HTTPSConnection(netloc)
         else:
-            raise AssertionError, "unsupported schema "+schema
+            raise AssertionError("unsupported schema " + schema)
 
         data = ''
         loglevel = log.INFO
@@ -132,7 +140,7 @@ class UploadDoc(upload):
             http.putheader('Authorization', auth)
             http.endheaders()
             http.send(body)
-        except socket.error, e:
+        except socket.error as e:
             self.announce(str(e), log.ERROR)
             return
 
@@ -150,7 +158,9 @@ class UploadDoc(upload):
             self.announce('Upload failed (%s): %s' % (response.status, response.reason),
                           log.ERROR)
         if self.show_response:
-            print '-'*75, response.read(), '-'*75
+            print('-'*75)
+            print(response.read().strip())
+            print('-'*75)
 
     def run(self):
         zip_file = self.create_zipfile()
