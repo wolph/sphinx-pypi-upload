@@ -62,11 +62,10 @@ class UploadDoc(upload):
         tmp_dir = tempfile.mkdtemp()
         tmp_file = os.path.join(tmp_dir, "%s.zip" % name)
         zip_file = zipfile.ZipFile(tmp_file, "w")
+        if not os.path.exists(os.path.join(self.upload_dir, 'index.html')):
+            raise DistutilsOptionError, \
+                  "index.html not found in upload directory '%s'" % self.upload_dir
         for root, dirs, files in os.walk(self.upload_dir):
-            if not files:
-                raise DistutilsOptionError(
-                    "no files found in upload directory '%s'"
-                    % self.upload_dir)
             for name in files:
                 full = os.path.join(root, name)
                 relative = root[len(self.upload_dir):].lstrip(os.path.sep)
