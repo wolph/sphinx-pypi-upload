@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
+'''
     sphinx_pypi_upload
     ~~~~~~~~~~~~~~~~~~
 
@@ -9,9 +9,8 @@
     :contact: jannis@leidel.info
     :copyright: Copyright 2009, Jannis Leidel.
     :license: BSD, see LICENSE for details.
-"""
+'''
 
-import sys
 import os
 import socket
 import zipfile
@@ -31,8 +30,10 @@ from distutils import log
 from distutils.command.upload import upload
 from distutils.errors import DistutilsOptionError
 
+
 class UploadDoc(upload):
-    """Distutils command to upload Sphinx documentation."""
+
+    '''Distutils command to upload Sphinx documentation.'''
 
     description = 'Upload Sphinx documentation to PyPI'
     user_options = [
@@ -41,7 +42,7 @@ class UploadDoc(upload):
         ('show-response', None,
          'display full response text from server'),
         ('upload-dir=', None, 'directory to upload'),
-        ]
+    ]
     boolean_options = upload.boolean_options
 
     def initialize_options(self):
@@ -60,11 +61,12 @@ class UploadDoc(upload):
     def create_zipfile(self):
         name = self.distribution.metadata.get_name()
         tmp_dir = tempfile.mkdtemp()
-        tmp_file = os.path.join(tmp_dir, "%s.zip" % name)
-        zip_file = zipfile.ZipFile(tmp_file, "w")
+        tmp_file = os.path.join(tmp_dir, '%s.zip' % name)
+        zip_file = zipfile.ZipFile(tmp_file, 'w')
         if not os.path.exists(os.path.join(self.upload_dir, 'index.html')):
-            raise DistutilsOptionError, \
-                  "index.html not found in upload directory '%s'" % self.upload_dir
+            raise DistutilsOptionError(
+                'index.html not found in upload directory %r'
+                % self.upload_dir)
         for root, dirs, files in os.walk(self.upload_dir):
             for name in files:
                 full = os.path.join(root, name)
@@ -75,15 +77,15 @@ class UploadDoc(upload):
         return tmp_file
 
     def upload_file(self, filename):
-        content = open(filename,'rb').read()
+        content = open(filename, 'rb').read()
         meta = self.distribution.metadata
         data = {
             ':action': b'doc_upload',
             'name': meta.get_name().encode('ascii'),
-            'content': (os.path.basename(filename),content),
+            'content': (os.path.basename(filename), content),
         }
         # set up the authentication
-        auth = (self.username + ":" + self.password).encode('ascii')
+        auth = (self.username + ':' + self.password).encode('ascii')
         auth = b"Basic " + base64.encodestring(auth).strip()
 
         # Build up the MIME payload for the POST data
@@ -93,8 +95,9 @@ class UploadDoc(upload):
         body = StringIO.BytesIO()
         for key, value in data.items():
             # handle multiple entries for the same name
-            if type(value) != type([]):
+            if not isinstance(value, list):
                 value = [value]
+
             for value in value:
                 if type(value) is tuple:
                     fn = (';filename="%s"' % value[0]).encode('ascii')
@@ -113,7 +116,8 @@ class UploadDoc(upload):
         body.write(b"\n")
         body = body.getvalue()
 
-        self.announce("Submitting documentation to %s" % (self.repository), log.INFO)
+        self.announce("Submitting documentation to %s" %
+                      (self.repository), log.INFO)
 
         # build the Request
         # We can't use urllib2 since we need to send the Basic
@@ -129,12 +133,11 @@ class UploadDoc(upload):
             raise AssertionError("unsupported schema " + schema)
 
         data = ''
-        loglevel = log.INFO
         try:
             http.connect()
             http.putrequest("POST", url)
             http.putheader('Content-type',
-                           'multipart/form-data; boundary=%s'%boundary)
+                           'multipart/form-data; boundary=%s' % boundary)
             http.putheader('Content-length', str(len(body)))
             http.putheader('Authorization', auth)
             http.endheaders()
@@ -145,8 +148,10 @@ class UploadDoc(upload):
 
         response = http.getresponse()
         if response.status == 200:
-            self.announce('Server response (%s): %s' % (response.status, response.reason),
-                          log.INFO)
+            self.announce(
+                'Server response (%s): %s'
+                % (response.status, response.reason),
+                log.INFO)
         elif response.status == 301:
             location = response.getheader('Location')
             if location is None:
@@ -154,12 +159,14 @@ class UploadDoc(upload):
             self.announce('Upload successful. Visit %s' % location,
                           log.INFO)
         else:
-            self.announce('Upload failed (%s): %s' % (response.status, response.reason),
-                          log.ERROR)
+            self.announce(
+                'Upload failed (%s): %s' %
+                (response.status, response.reason),
+                log.ERROR)
         if self.show_response:
-            print('-'*75)
+            print('-' * 75)
             print(response.read().strip())
-            print('-'*75)
+            print('-' * 75)
 
     def run(self):
         zip_file = self.create_zipfile()

@@ -3,7 +3,10 @@ Sphinx-PyPI-upload
 
 This package contains a `setuptools`_ command for uploading `Sphinx`_
 documentation to the `Python Package Index`_ (PyPI) at the dedicated URL
-packages.python.org.
+packages.python.org. It was forked from the similarly named script from Jannis
+Leidel which has not been updated since 2009.
+
+Homepage: https://github.com/WoLpH/sphinx-pypi-upload
 
 .. _setuptools: http://pypi.python.org/pypi/setuptools
 .. _Sphinx: http://sphinx.pocoo.org/
