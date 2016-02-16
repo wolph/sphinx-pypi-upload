@@ -5,6 +5,7 @@ from setuptools import setup
 def read(name):
     return open(os.path.join(os.path.dirname(__file__), name)).read()
 
+
 setup(
     name='Sphinx-PyPI-upload-2',
     version='0.2.2',
