@@ -14,7 +14,7 @@ setup(
     url='https://github.com/WoLpH/sphinx-pypi-upload',
     description='Setuptools command for uploading Sphinx documentation to the '
                 'PyPI',
-    long_description=read('README'),
+    long_description=read('README.rst'),
     license='BSD',
     classifiers=[
         'Topic :: Documentation',
