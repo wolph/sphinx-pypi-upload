@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/WoLpH/sphinx-pypi-upload.svg?branch=master
+    :target: https://travis-ci.org/WoLpH/sphinx-pypi-upload
+
 Sphinx-PyPI-upload
 ==================
 
