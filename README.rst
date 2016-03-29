@@ -1,6 +1,9 @@
 .. image:: https://travis-ci.org/WoLpH/sphinx-pypi-upload.svg?branch=master
     :target: https://travis-ci.org/WoLpH/sphinx-pypi-upload
 
+.. image:: https://badge.fury.io/py/sphinx-pypi-upload-2.svg
+    :target: https://badge.fury.io/py/sphinx-pypi-upload-2
+
 Sphinx-PyPI-upload
 ==================
 
