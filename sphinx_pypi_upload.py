@@ -137,7 +137,8 @@ class UploadDoc(upload):
             http.connect()
             http.putrequest("POST", url)
             http.putheader('Content-type',
-                           'multipart/form-data; boundary=%s' % boundary)
+                           'multipart/form-data; boundary=%s' %
+                           boundary.decode('ascii'))
             http.putheader('Content-length', str(len(body)))
             http.putheader('Authorization', auth)
             http.endheaders()
