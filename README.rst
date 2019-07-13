@@ -4,6 +4,9 @@
 .. image:: https://badge.fury.io/py/sphinx-pypi-upload-2.svg
     :target: https://badge.fury.io/py/sphinx-pypi-upload-2
 
+**Uploading of documentation to PyPI has been `disabled`_,
+so this package cannot be used with PyPI itself anymore.**
+
 Sphinx-PyPI-upload
 ==================
 
@@ -11,9 +14,6 @@ This package contains a `setuptools`_ command for uploading `Sphinx`_
 documentation to the `Python Package Index`_ (PyPI) at the dedicated URL
 packages.python.org. It was forked from the similarly named `script`_ from Jannis
 Leidel.
-
-Uploading of documentation to PyPI has been `disabled`_,
-so this package cannot be used with PyPI itself anymore.
 
 Homepage: https://github.com/WoLpH/sphinx-pypi-upload
 
